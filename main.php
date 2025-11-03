@@ -4,7 +4,6 @@ if (!file_exists($booksFile)) die("❌ Error: books.json not found.");
 $books = json_decode(file_get_contents($booksFile), true);
 if (!is_array($books)) die("❌ Invalid books.json format.");
 
-// --- BST Node & Book BST ---
 class BSTNode {
     public $book, $left, $right;
     public function __construct($book) { $this->book = $book; $this->left = null; $this->right = null; }
@@ -29,14 +28,12 @@ class BookBST {
     public function inorder($node, &$arr) { if ($node) { $this->inorder($node->left,$arr); $arr[]=$node->book; $this->inorder($node->right,$arr); } }
 }
 
-// --- Hashtable ---
 class BookHashtable {
     private $table = [];
     public function insert($book) { $this->table[strtolower(trim($book['title']))] = $book; }
     public function search($title) { return $this->table[strtolower(trim($title))] ?? null; }
 }
 
-// --- Build BST and Hashtable ---
 $bst = new BookBST();
 $hashtable = new BookHashtable();
 foreach ($books as $book) {
@@ -44,18 +41,15 @@ foreach ($books as $book) {
     $hashtable->insert($book);
 }
 
-// --- Search ---
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
 $result = null;
 if ($query !== '') {
     $result = $bst->search($query) ?: $hashtable->search($query);
 }
 
-// --- Sorted Books ---
 $sortedBooks = [];
 $bst->inorder($bst->root, $sortedBooks);
 
-// --- Safe image function ---
 function getBookImage($book) {
     foreach(['imageLink','image','cover'] as $k) if (!empty($book[$k])) return $book[$k];
     return 'https://via.placeholder.com/150x220?text=No+Image';
@@ -83,7 +77,6 @@ button:hover { background:#ffef85;}
 .card strong { display:block; margin-top:10px; font-size:1.1em; color:var(--maroon);}
 .small { font-size:0.9em; color:#4b0e0e; }
 
-/* --- Modal Zoom --- */
 #zoomModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; animation:fadeIn 0.3s;}
 #zoomModal.show { display:flex; }
 #zoomModal .modal-content { background:var(--light); color:var(--maroon); padding:20px; border-radius:15px; max-width:350px; text-align:center; box-shadow:0 10px 25px var(--shadow); transform: scale(0); animation:zoomIn 0.3s forwards;}
@@ -91,7 +84,6 @@ button:hover { background:#ffef85;}
 #zoomModal button { margin-top:10px; padding:10px 20px; background:var(--gold); border:none; border-radius:10px; color:var(--maroon); font-weight:bold; cursor:pointer; }
 #zoomModal button:hover { background:#ffef85; }
 
-/* --- Animations --- */
 @keyframes zoomIn { from {transform:scale(0);} to {transform:scale(1);} }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 </style>
@@ -132,7 +124,6 @@ foreach($displayBooks as $b):
 <p style="text-align:center;color:white;font-size:1.2em;">❌ Book not found in library.</p>
 <?php endif; ?>
 
-<!-- Zoom Modal -->
 <div id="zoomModal">
     <div class="modal-content">
         <img id="modalImg" src="" alt="">
@@ -144,7 +135,7 @@ foreach($displayBooks as $b):
 </div>
 
 <script>
-// Modal functionality
+    
 const modal = document.getElementById('zoomModal');
 const modalImg = document.getElementById('modalImg');
 const modalTitle = document.getElementById('modalTitle');
@@ -170,3 +161,4 @@ modal.addEventListener('click', e=>{
 
 </body>
 </html>
+
